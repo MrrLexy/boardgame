@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Game Night Menu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Bagel+Fat+One&family=Caveat:wght@400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAF7F0; --bg-panel:#F2EDE0; --ink:#2C2A26; --ink-soft:#5C574E;
+    --banner:#FFD23F; --cyan:#5FC9D6; --green:#8AD66B; --red:#FF6B6B;
+    --magenta:#E07AC4; --yellow:#F4D95E; --orange:#FFA94D; --purple:#B79FE0; --teal:#4FB8A9;
+    --display:'Lilita One','Bagel Fat One',system-ui,sans-serif;
+    --hand:'Caveat','Patrick Hand',cursive;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--display);-webkit-font-smoothing:antialiased}
+  body{min-height:100vh;background-image:radial-gradient(circle at 1px 1px,rgba(44,42,38,.06) 1px,transparent 0);background-size:24px 24px}
+  header.topbar{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:3px solid var(--ink);padding:18px 28px 14px}
+  .topbar-inner{max-width:1400px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:18px}
+  .brand{display:flex;align-items:baseline;gap:14px}
+  .brand h1{font-family:var(--display);font-size:36px;letter-spacing:.5px;margin:0;color:var(--ink);background:var(--banner);padding:6px 18px 4px;border-radius:6px;transform:rotate(-1deg);box-shadow:4px 4px 0 var(--ink)}
+  .brand .sub{font-family:var(--hand);font-size:22px;color:var(--ink-soft);transform:translateY(-2px)}
+  .topbar-tools{margin-left:auto;display:flex;gap:12px;align-items:center;flex:1 1 320px;min-width:0;justify-content:flex-end;flex-wrap:wrap}
+  .search-box{position:relative;flex:1 1 260px;max-width:380px;min-width:200px}
+  .search-box input{width:100%;font-family:var(--display);font-size:18px;padding:12px 16px 10px 44px;border:3px solid var(--ink);border-radius:14px;background:#fff;color:var(--ink);outline:none;box-shadow:3px 3px 0 var(--ink)}
+  .search-box input::placeholder{color:#A7A299}
+  .search-box::before{content:"";position:absolute;left:14px;top:50%;width:22px;height:22px;transform:translateY(-50%);background:no-repeat center/contain url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232C2A26' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><circle cx='11' cy='11' r='7'/><path d='m20 20-3.5-3.5'/></svg>")}
+  .pill-btn{font-family:var(--display);font-size:16px;letter-spacing:.5px;background:var(--ink);color:var(--bg);border:none;border-radius:14px;padding:12px 18px 10px;cursor:pointer;box-shadow:3px 3px 0 #00000033;transition:transform .1s}
+  .pill-btn:hover{transform:translate(-1px,-1px)}
+  .pill-btn:active{transform:translate(1px,1px);box-shadow:1px 1px 0 #00000033}
+  .pill-btn.accent{background:var(--red);color:#fff}
+
+  .filters{max-width:1400px;margin:14px auto 0;padding:0 28px;display:flex;flex-wrap:wrap;gap:18px;align-items:center}
+  .filter-group{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .filter-label{font-family:var(--display);font-size:14px;color:var(--ink-soft);letter-spacing:.5px;text-transform:uppercase}
+  .chip{font-family:var(--display);font-size:14px;letter-spacing:.4px;padding:6px 12px 4px;border-radius:999px;background:#fff;color:var(--ink);border:2px solid var(--ink);cursor:pointer;transition:all .15s;user-select:none}
+  .chip:hover{background:var(--bg-panel)}
+  .chip.active{background:var(--ink);color:var(--bg)}
+  .chip.green.active{background:var(--green);color:var(--ink)}
+  .chip.cyan.active{background:var(--cyan);color:var(--ink)}
+  .chip.red.active{background:var(--red);color:#fff}
+  .chip.yellow.active{background:var(--yellow);color:var(--ink)}
+  .chip.orange.active{background:var(--orange);color:var(--ink)}
+  .count-pill{margin-left:auto;font-family:var(--hand);font-size:22px;color:var(--ink-soft)}
+
+  main{max-width:1400px;margin:0 auto;padding:28px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:22px}
+  .card{position:relative;background:#fff;border:3px solid var(--ink);border-radius:18px;overflow:hidden;cursor:pointer;box-shadow:5px 5px 0 var(--ink);transition:transform .15s,box-shadow .15s;display:flex;flex-direction:column;min-height:340px}
+  .card:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+  .card:active{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+  .cover{aspect-ratio:1/1;width:100%;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center;padding:14px;background-image:radial-gradient(circle at 6px 6px,rgba(0,0,0,.08) 1.5px,transparent 0);background-size:14px 14px}
+  .cover img{width:100%;height:100%;object-fit:cover;display:block}
+  .cover .placeholder-title{font-family:var(--display);font-size:24px;line-height:1.05;color:var(--ink);text-shadow:2px 2px 0 rgba(255,255,255,.6);max-width:90%}
+  .card-info{padding:12px 14px 14px;display:flex;flex-direction:column;gap:6px;flex:1}
+  .card-title{font-family:var(--display);font-size:18px;line-height:1.15;letter-spacing:.2px;color:var(--ink);margin:0}
+  .card-meta{font-family:var(--hand);font-size:18px;color:var(--ink-soft);line-height:1}
+  .card-badges{display:flex;gap:6px;margin-top:auto;flex-wrap:wrap}
+  .mini-badge{font-family:var(--display);font-size:11px;letter-spacing:.3px;color:var(--ink);padding:3px 8px 2px;border-radius:999px;border:2px solid var(--ink);display:inline-flex;align-items:center;gap:4px;line-height:1}
+  .mini-badge.players{background:var(--green)}
+  .mini-badge.time{background:var(--magenta);color:#fff}
+  .mini-badge.weight{background:var(--red);color:#fff}
+  .mini-badge.rating{background:var(--cyan)}
+  .fav-mark{position:absolute;top:10px;right:10px;width:32px;height:32px;border-radius:50%;background:var(--yellow);border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:2px 2px 0 var(--ink)}
+  .wtp-mark{position:absolute;top:10px;left:10px;width:28px;height:28px;border-radius:50%;background:var(--magenta);border:2px solid var(--ink);display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:2px 2px 0 var(--ink)}
+  .wtp-mark.wishlist{background:var(--purple)}
+  .empty{text-align:center;padding:80px 20px;font-family:var(--hand);font-size:32px;color:var(--ink-soft)}
+
+  .modal-backdrop{position:fixed;inset:0;background:rgba(44,42,38,.55);display:none;align-items:flex-start;justify-content:center;z-index:100;padding:24px;overflow-y:auto}
+  .modal-backdrop.open{display:flex}
+  .modal{position:relative;background:var(--bg);border:3px solid var(--ink);border-radius:22px;max-width:840px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.35);overflow:hidden;margin:auto}
+  .modal-close{position:absolute;top:14px;right:14px;width:42px;height:42px;border-radius:50%;background:var(--ink);color:var(--bg);border:none;cursor:pointer;font-family:var(--display);font-size:22px;z-index:5;box-shadow:3px 3px 0 #00000033}
+  .modal-close:hover{background:var(--red)}
+  .modal-print{position:absolute;top:14px;right:66px;height:42px;padding:0 16px;border-radius:21px;background:var(--bg-panel);color:var(--ink);border:3px solid var(--ink);cursor:pointer;font-family:var(--display);font-size:14px;letter-spacing:.5px;z-index:5;box-shadow:3px 3px 0 #00000033;display:flex;align-items:center;gap:6px}
+  .modal-print:hover{background:var(--yellow)}
+
+  .menu-banner{background:var(--banner);padding:18px 28px 22px;border-bottom:3px solid var(--ink);position:relative;transform:rotate(-.4deg);transform-origin:left top;margin:18px 30px 0 -2px;border-radius:0 8px 8px 0;box-shadow:0 6px 0 rgba(44,42,38,.12);max-width:78%}
+  .menu-banner h2{font-family:var(--display);font-size:38px;line-height:1;margin:0 0 4px;color:var(--ink);letter-spacing:.5px;text-transform:uppercase;word-break:break-word}
+  .menu-banner .cats{font-family:var(--hand);font-style:italic;font-size:22px;color:var(--ink)}
+  .dot-grid{position:absolute;width:120px;height:90px;background-image:radial-gradient(circle,var(--ink) 1.5px,transparent 1.5px);background-size:14px 14px;background-position:0 0;opacity:.85}
+  .dot-grid.tr{top:28px;right:28px}
+
+  .menu-body{padding:24px 36px 36px;position:relative}
+  .menu-images{display:grid;grid-template-columns:1.4fr 1fr;gap:24px;align-items:center;margin:14px 0 24px;min-height:220px}
+  .menu-cover{background:#fff;border:3px solid var(--ink);border-radius:14px;overflow:hidden;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;padding:10px;box-shadow:5px 5px 0 var(--ink)}
+  .menu-cover img{width:100%;height:100%;object-fit:contain}
+  .menu-cover .placeholder-title{font-family:var(--display);font-size:42px;color:var(--ink);text-align:center;padding:14px;line-height:1.05}
+  .menu-secondary{display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;background-image:radial-gradient(circle at 6px 6px,rgba(0,0,0,.10) 1.5px,transparent 0);background-size:14px 14px;border-radius:14px}
+  .menu-secondary .floating-mark{font-family:var(--display);font-size:80px;color:var(--ink);opacity:.7;transform:rotate(-6deg)}
+  .menu-desc{font-family:var(--hand);font-size:24px;line-height:1.35;color:var(--ink);max-width:640px;margin:0 auto;text-align:center}
+
+  .badges-row{margin:30px auto 6px;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;max-width:640px}
+  .badge-cell{display:flex;flex-direction:column;align-items:center;gap:8px}
+  .badge-label{font-family:var(--display);font-size:13px;letter-spacing:1px;color:var(--ink);text-transform:uppercase}
+  .blob{width:96px;height:78px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:17px;color:var(--ink);letter-spacing:.3px;text-align:center;padding:0 6px;filter:drop-shadow(2px 3px 0 rgba(44,42,38,.18))}
+  .blob.rating{background:var(--cyan);border-radius:38% 62% 50% 50% / 55% 45% 55% 45%;transform:rotate(-3deg)}
+  .blob.players{background:var(--green);border-radius:55% 45% 60% 40% / 50% 60% 40% 50%;transform:rotate(2deg)}
+  .blob.complexity{background:var(--red);color:#fff;width:104px;height:90px;clip-path:polygon(50% 6%,96% 92%,4% 92%);border-radius:0;display:flex;align-items:flex-end;padding-bottom:14px;justify-content:center;transform:rotate(-2deg)}
+  .blob.time{background:var(--magenta);color:#fff;border-radius:60% 40% 55% 45% / 60% 50% 50% 40%;transform:rotate(3deg)}
+  .blob.age{background:var(--yellow);border-radius:50%;width:80px;height:80px;transform:rotate(-1deg)}
+
+  .tags-row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:24px 0 8px}
+  .tag{font-family:var(--display);font-size:13px;letter-spacing:.3px;padding:5px 12px 3px;border-radius:999px;border:2px solid var(--ink);background:#fff;color:var(--ink)}
+  .meta-row{margin-top:18px;font-family:var(--hand);font-size:20px;color:var(--ink-soft);text-align:center;line-height:1.4}
+
+  .roulette-strip{background:linear-gradient(180deg,var(--bg-panel),transparent);border-top:2px dashed var(--ink);border-bottom:2px dashed var(--ink);margin:18px 0;padding:14px 28px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;max-width:1400px;margin-left:auto;margin-right:auto}
+  .roulette-strip .label{font-family:var(--display);font-size:18px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink)}
+  .roulette-strip .picked{font-family:var(--hand);font-size:24px;color:var(--ink)}
+  .roulette-strip a{color:var(--red);font-weight:700;cursor:pointer;text-decoration:underline}
+  .status-banner{max-width:1400px;margin:14px auto 0;padding:10px 28px;font-family:var(--hand);font-size:18px;color:var(--ink-soft)}
+  .status-banner.warn{color:#A04545}
+
+  /* BGG link in modal */
+  .bgg-link{font-family:var(--hand);font-size:19px;color:var(--red);text-decoration:none}
+  .bgg-link:hover{text-decoration:underline}
+  .bgg-link-wrap{text-align:center;margin-top:10px}
+  /* Dark mode */
+  [data-theme="dark"]{--bg:#1C1B18;--bg-panel:#262420;--ink:#EDE8DE;--ink-soft:#9A9288}
+  [data-theme="dark"] body{background-image:radial-gradient(circle at 1px 1px,rgba(240,235,220,.05) 1px,transparent 0)}
+  [data-theme="dark"] .search-box input{background:#2E2C28}
+  [data-theme="dark"] .card{background:#252420}
+  [data-theme="dark"] .chip{background:#2E2C28}
+  [data-theme="dark"] .tag{background:#2E2C28}
+  [data-theme="dark"] .menu-cover{background:#2E2C28 !important}
+  #darkModeBtn{font-size:18px;padding:10px 14px}
+  /* ===== PRINT LAYOUT ===== */
+  #print-pages{display:none}
+  @page{ size: letter portrait; margin: 0.35in; }
+  @media print{
+    header.topbar,.filters,.status-banner,.roulette-strip,main,.modal-backdrop{display:none !important}
+    body{background:#fff !important;background-image:none !important;margin:0;padding:0}
+    #print-pages{display:block}
+    .print-page{width:100%;page-break-after:always;break-after:page;page-break-inside:avoid;break-inside:avoid;-webkit-print-color-adjust:exact;print-color-adjust:exact;color-adjust:exact;position:relative;overflow:hidden;padding:14px 22px 18px;box-sizing:border-box;min-height:10.2in;max-height:10.2in;display:flex;flex-direction:column;background:var(--bg)}
+    .print-page:last-child{page-break-after:auto;break-after:auto}
+    .print-banner{background:var(--banner);border-bottom:3px solid var(--ink);padding:14px 24px 18px;transform:rotate(-.4deg);transform-origin:left top;box-shadow:0 5px 0 rgba(44,42,38,.12);max-width:78%;margin-bottom:8px}
+    .print-banner h2{font-family:var(--display);font-size:34px;line-height:1;margin:0 0 4px;letter-spacing:.5px;text-transform:uppercase;color:var(--ink);word-break:break-word}
+    .print-banner .cats{font-family:var(--hand);font-style:italic;font-size:20px;color:var(--ink)}
+    .print-page .dot-grid{position:absolute;top:24px;right:24px;width:110px;height:80px;background-image:radial-gradient(circle,var(--ink) 1.4px,transparent 1.4px);background-size:13px 13px;opacity:.85}
+    .print-images{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;align-items:center;margin:10px 0 12px;min-height:2.6in}
+    .print-cover{background:#fff;border:3px solid var(--ink);border-radius:14px;overflow:hidden;aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:5px 5px 0 var(--ink);max-height:2.8in}
+    .print-cover img{width:100%;height:100%;object-fit:contain}
+    .print-cover .placeholder-title{font-family:var(--display);font-size:34px;color:var(--ink);text-align:center;padding:10px;line-height:1.05}
+    .print-secondary{display:flex;align-items:center;justify-content:center;aspect-ratio:1/1;max-height:2.8in;background-image:radial-gradient(circle at 5px 5px,rgba(0,0,0,.10) 1.4px,transparent 0);background-size:13px 13px;border-radius:14px}
+    .print-secondary .floating-mark{font-family:var(--display);font-size:70px;color:var(--ink);opacity:.7;transform:rotate(-6deg)}
+    .print-desc{font-family:var(--hand);font-size:21px;line-height:1.3;color:var(--ink);max-width:6.6in;margin:6px auto 10px;text-align:center}
+    .print-badges-row{margin:10px auto 0;display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-width:6.4in}
+    .print-badges-row .badge-cell{display:flex;flex-direction:column;align-items:center;gap:6px}
+    .print-badges-row .badge-label{font-family:var(--display);font-size:11px;letter-spacing:1px;color:var(--ink);text-transform:uppercase}
+    .print-badges-row .blob{width:88px;height:72px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:15px;color:var(--ink);letter-spacing:.3px;text-align:center;padding:0 6px;filter:drop-shadow(2px 3px 0 rgba(44,42,38,.18))}
+    .print-badges-row .blob.rating{background:var(--cyan);border-radius:38% 62% 50% 50% / 55% 45% 55% 45%;transform:rotate(-3deg)}
+    .print-badges-row .blob.players{background:var(--green);border-radius:55% 45% 60% 40% / 50% 60% 40% 50%;transform:rotate(2deg)}
+    .print-badges-row .blob.complexity{background:var(--red);color:#fff;width:96px;height:82px;clip-path:polygon(50% 6%,96% 92%,4% 92%);border-radius:0;display:flex;align-items:flex-end;padding-bottom:12px;justify-content:center;transform:rotate(-2deg)}
+    .print-badges-row .blob.time{background:var(--magenta);color:#fff;border-radius:60% 40% 55% 45% / 60% 50% 50% 40%;transform:rotate(3deg)}
+    .print-badges-row .blob.age{background:var(--yellow);border-radius:50%;width:72px;height:72px;transform:rotate(-1deg)}
+    .print-tags{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin:14px 0 4px}
+    .print-tags .tag{font-family:var(--display);font-size:11px;letter-spacing:.3px;padding:4px 10px 3px;border-radius:999px;border:2px solid var(--ink);background:#fff;color:var(--ink)}
+    .print-meta{margin-top:auto;padding-top:10px;font-family:var(--hand);font-size:18px;color:var(--ink-soft);text-align:center;line-height:1.35;border-top:2px dashed rgba(44,42,38,.3)}
+    .print-meta .id-stamp{font-family:var(--display);font-size:10px;letter-spacing:1px;color:var(--ink-soft);text-transform:uppercase;margin-top:4px;display:block}
+    body.print-single .print-page{display:none !important}
+    body.print-single .print-page.print-target{display:flex !important}
+  }
+  body.print-single #print-pages{display:block}
+
+  @media (max-width:720px){
+    .menu-images{grid-template-columns:1fr;gap:14px}
+    .menu-secondary{display:none}
+    .badges-row{grid-template-columns:repeat(3,1fr);gap:12px 8px}
+    .menu-banner{max-width:88%;margin-right:18px}
+    .menu-banner h2{font-size:28px}
+    .menu-desc{font-size:20px}
+    .dot-grid.tr{display:none}
+    .brand h1{font-size:26px}
+    .filters{padding:0 18px}
+    main{padding:18px}
+    .grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
+    .card{min-height:280px}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <h1>GAME NIGHT MENU</h1>
+      <span class="sub">&mdash; what shall we play tonight?</span>
+    </div>
+    <div class="topbar-tools">
+      <div class="search-box"><input id="search" type="search" placeholder="Search the shelf..." autocomplete="off"></div>
+      <button class="pill-btn accent" id="rouletteBtn">&#127922; Pick for me</button>
+      <button class="pill-btn" id="printBtn" title="Print all games &mdash; one per page">&#128424; Print catalog</button>
+      <button class="pill-btn" id="darkModeBtn" title="Toggle dark mode">&#9790;</button>
+    </div>
+  </div>
+</header>
+
+<div class="filters" id="filters">
+  <div class="filter-group">
+    <span class="filter-label">Players</span>
+    <span class="chip green" data-filter="players" data-val="any">Any</span>
+    <span class="chip green" data-filter="players" data-val="1">Solo</span>
+    <span class="chip green" data-filter="players" data-val="2">2</span>
+    <span class="chip green" data-filter="players" data-val="3">3</span>
+    <span class="chip green" data-filter="players" data-val="4">4</span>
+    <span class="chip green" data-filter="players" data-val="5">5</span>
+    <span class="chip green" data-filter="players" data-val="6+">6+</span>
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">Time</span>
+    <span class="chip cyan" data-filter="time" data-val="any">Any</span>
+    <span class="chip cyan" data-filter="time" data-val="short">&le;30 min</span>
+    <span class="chip cyan" data-filter="time" data-val="med">30&ndash;60 min</span>
+    <span class="chip cyan" data-filter="time" data-val="long">60&ndash;120 min</span>
+    <span class="chip cyan" data-filter="time" data-val="epic">2 hr+</span>
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">Complexity</span>
+    <span class="chip red" data-filter="weight" data-val="any">Any</span>
+    <span class="chip red" data-filter="weight" data-val="light">Light</span>
+    <span class="chip red" data-filter="weight" data-val="medium">Medium</span>
+    <span class="chip red" data-filter="weight" data-val="heavy">Heavy</span>
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">Sort</span>
+    <span class="chip yellow active" data-filter="sort" data-val="name">A &rarr; Z</span>
+    <span class="chip yellow" data-filter="sort" data-val="rating">Rating</span>
+    <span class="chip yellow" data-filter="sort" data-val="weight">Complexity</span>
+    <span class="chip yellow" data-filter="sort" data-val="year">Newest</span>
+    <span class="chip yellow" data-filter="sort" data-val="plays">Most Played</span>
+  </div>
+  <div class="filter-group">
+    <span class="filter-label">Collection</span>
+    <span class="chip orange active" data-filter="collection" data-val="all">All</span>
+    <span class="chip orange" data-filter="collection" data-val="owned">Owned</span>
+    <span class="chip orange" data-filter="collection" data-val="wanttoplay">Want to Play</span>
+    <span class="chip orange" data-filter="collection" data-val="wishlist">Wishlist</span>
+  </div>
+  <div class="count-pill" id="countPill"></div>
+</div>
+
+<div class="status-banner" id="status"></div>
+
+<div class="roulette-strip" id="rouletteStrip" style="display:none">
+  <span class="label">Tonight's pick:</span>
+  <span class="picked" id="roulettePicked"></span>
+  <a id="rouletteOpen">Open menu &rarr;</a>
+  <a id="rouletteAgain" style="margin-left:auto">Spin again &#x21bb;</a>
+</div>
+
+<main>
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="emptyState" style="display:none">No games match those filters. Loosen up &mdash; game night calls for compromise.</div>
+</main>
+
+<div class="modal-backdrop" id="modal">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<div id="print-pages" aria-hidden="true"></div>
+
+<script id="games-data" type="application/json">[{"id":"86073","name":"5 Second Rule","year":2010,"minPlayers":3,"maxPlayers":6,"minPlayTime":20,"maxPlayTime":30,"playingTime":30,"ageRange":"8+","bestPlayers":"4,5,6","recPlayers":"3,4,5,6","bggRating":5.49,"bggWeight":1.1,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"218722","name":"5 Second Rule: Uncensored","year":2016,"minPlayers":3,"maxPlayers":99,"minPlayTime":30,"maxPlayTime":45,"playingTime":45,"ageRange":"21 and up","bestPlayers":"5","recPlayers":"2,3,4,5,6,7,8","bggRating":5.14,"bggWeight":1.25,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"368609","name":"Abducktion","year":2023,"minPlayers":1,"maxPlayers":4,"minPlayTime":15,"maxPlayTime":15,"playingTime":15,"ageRange":"8+","bestPlayers":"2","recPlayers":"1,2,3","bggRating":6.9,"bggWeight":1.37,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":false,"wishlist":false},{"id":"267813","name":"Adventure Games: The Dungeon","year":2019,"minPlayers":1,"maxPlayers":4,"minPlayTime":90,"maxPlayTime":90,"playingTime":90,"ageRange":"10+","bestPlayers":"2","recPlayers":"1,2,3,4","bggRating":6.91,"bggWeight":1.66,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"253420","name":"AlderQuest","year":2021,"minPlayers":1,"maxPlayers":4,"minPlayTime":60,"maxPlayTime":90,"playingTime":90,"ageRange":"","bestPlayers":"2","recPlayers":"2,4","bggRating":6.18,"bggWeight":3.0,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"298299","name":"AlderQuest: Arctic Allies Expansion","year":2021,"minPlayers":1,"maxPlayers":4,"minPlayTime":60,"maxPlayTime":90,"playingTime":90,"ageRange":"","bestPlayers":"","recPlayers":"","bggRating":5.4,"bggWeight":0.0,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"15987","name":"Arkham Horror","year":2005,"minPlayers":1,"maxPlayers":8,"minPlayTime":120,"maxPlayTime":240,"playingTime":240,"ageRange":"14+","bestPlayers":"4","recPlayers":"1,2,3,4,5,6","bggRating":7.24,"bggWeight":3.59,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":false,"wishlist":false},{"id":"331017","name":"Avatar: The Last Airbender Oh, My Cabbages!","year":2021,"minPlayers":3,"maxPlayers":6,"minPlayTime":30,"maxPlayTime":90,"playingTime":90,"ageRange":"","bestPlayers":"","recPlayers":"","bggRating":2.72,"bggWeight":0.0,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":false,"wishlist":false},{"id":"41863","name":"Axis & Allies: 1942","year":2009,"minPlayers":2,"maxPlayers":5,"minPlayTime":240,"maxPlayTime":240,"playingTime":240,"ageRange":"12+","bestPlayers":"5","recPlayers":"2,3,4,5","bggRating":6.94,"bggWeight":3.16,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"230802","name":"Azul","year":2017,"minPlayers":2,"maxPlayers":4,"minPlayTime":30,"maxPlayTime":45,"playingTime":45,"ageRange":"8+","bestPlayers":"2","recPlayers":"2,3,4","bggRating":7.71,"bggWeight":1.77,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"287954","name":"Azul: Summer Pavilion","year":2019,"minPlayers":2,"maxPlayers":4,"minPlayTime":30,"maxPlayTime":45,"playingTime":45,"ageRange":"8+","bestPlayers":"2,3","recPlayers":"2,3,4","bggRating":7.57,"bggWeight":2.07,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"332613","name":"Azul: Summer Pavilion – Glazed Pavilion","year":2021,"minPlayers":2,"maxPlayers":4,"minPlayTime":30,"maxPlayTime":45,"playingTime":45,"ageRange":"8+","bestPlayers":"2","recPlayers":"2,3,4","bggRating":7.6,"bggWeight":2.18,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"163","name":"Balderdash","year":1984,"minPlayers":2,"maxPlayers":6,"minPlayTime":60,"maxPlayTime":60,"playingTime":60,"ageRange":"12+","bestPlayers":"5,6","recPlayers":"4,5,6","bggRating":6.48,"bggWeight":1.39,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"30933","name":"BANG! The Bullet!","year":2007,"minPlayers":3,"maxPlayers":8,"minPlayTime":20,"maxPlayTime":40,"playingTime":40,"ageRange":"8+","bestPlayers":"6,7","recPlayers":"4,5,6,7,8","bggRating":6.92,"bggWeight":1.85,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"143741","name":"BANG! The Dice Game","year":2013,"minPlayers":3,"maxPlayers":8,"minPlayTime":15,"maxPlayTime":15,"playingTime":15,"ageRange":"8+","bestPlayers":"6,7","recPlayers":"5,6,7,8","bggRating":6.88,"bggWeight":1.28,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"182094","name":"BANG! The Duel","year":2015,"minPlayers":2,"maxPlayers":2,"minPlayTime":30,"maxPlayTime":30,"playingTime":30,"ageRange":"10+","bestPlayers":"2","recPlayers":"2","bggRating":6.39,"bggWeight":1.91,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"360158","name":"The Best Friend Game","year":2021,"minPlayers":4,"maxPlayers":12,"minPlayTime":0,"maxPlayTime":0,"playingTime":0,"ageRange":"","bestPlayers":"","recPlayers":"","bggRating":5.49,"bggWeight":1.0,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"366994","name":"Bonsai","year":2023,"minPlayers":1,"maxPlayers":4,"minPlayTime":40,"maxPlayTime":40,"playingTime":40,"ageRange":"8+","bestPlayers":"3","recPlayers":"1,2,3,4","bggRating":7.17,"bggWeight":1.8,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":false,"wishlist":false},{"id":"172081","name":"Burgle Bros.","year":2015,"minPlayers":1,"maxPlayers":4,"minPlayTime":45,"maxPlayTime":90,"playingTime":90,"ageRange":"10+","bestPlayers":"3","recPlayers":"1,2,3,4","bggRating":7.4,"bggWeight":2.31,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":false,"wishlist":false},{"id":"378848","name":"Camel Up: The Card Game","year":2023,"minPlayers":2,"maxPlayers":6,"minPlayTime":30,"maxPlayTime":45,"playingTime":45,"ageRange":"8+","bestPlayers":"4","recPlayers":"2,3,4,5,6","bggRating":6.8,"bggWeight":2.06,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"290236","name":"Canvas","year":2021,"minPlayers":1,"maxPlayers":5,"minPlayTime":30,"maxPlayTime":30,"playingTime":30,"ageRange":"8+","bestPlayers":"3,4","recPlayers":"1,2,3,4,5","bggRating":7.19,"bggWeight":1.73,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":false,"wishlist":false},{"id":"290236","name":"Canvas: Deluxe Edition","year":2022,"minPlayers":1,"maxPlayers":5,"minPlayTime":30,"maxPlayTime":30,"playingTime":30,"ageRange":"8+","bestPlayers":"3,4","recPlayers":"1,2,3,4,5","bggRating":7.19,"bggWeight":1.73,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"409863","name":"Canvas: Finishing Touches – Deluxe Edition","year":2023,"minPlayers":1,"maxPlayers":5,"minPlayTime":30,"maxPlayTime":30,"playingTime":30,"ageRange":"10+","bestPlayers":"3","recPlayers":"2,3,4","bggRating":8.14,"bggWeight":2.0,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"337330","name":"Canvas: Reflections – Deluxe Edition","year":2022,"minPlayers":1,"maxPlayers":5,"minPlayTime":30,"maxPlayTime":30,"playingTime":30,"ageRange":"8+","bestPlayers":"2,4","recPlayers":"1,2,3,4,5","bggRating":7.94,"bggWeight":1.8,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"822","name":"Carcassonne","year":2000,"minPlayers":2,"maxPlayers":5,"minPlayTime":30,"maxPlayTime":45,"playingTime":45,"ageRange":"8+","bestPlayers":"2","recPlayers":"2,3,4,5","bggRating":7.42,"bggWeight":1.89,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"333515","name":"Cards Against Disney","year":2018,"minPlayers":4,"maxPlayers":20,"minPlayTime":30,"maxPlayTime":60,"playingTime":60,"ageRange":"","bestPlayers":"","recPlayers":"","bggRating":5.53,"bggWeight":1.0,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"13","name":"Catan","year":1995,"minPlayers":3,"maxPlayers":4,"minPlayTime":60,"maxPlayTime":120,"playingTime":120,"ageRange":"8+","bestPlayers":"4","recPlayers":"3,4","bggRating":7.09,"bggWeight":2.28,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"926","name":"Catan: Cities & Knights","year":1998,"minPlayers":3,"maxPlayers":4,"minPlayTime":90,"maxPlayTime":150,"playingTime":150,"ageRange":"12+","bestPlayers":"4","recPlayers":"3,4","bggRating":7.45,"bggWeight":2.9,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"408727","name":"Catan: New Energies","year":2024,"minPlayers":3,"maxPlayers":4,"minPlayTime":90,"maxPlayTime":90,"playingTime":90,"ageRange":"10+","bestPlayers":"3,4","recPlayers":"3,4","bggRating":6.69,"bggWeight":2.25,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":false,"wishlist":false},{"id":"815","name":"Chrononauts","year":2000,"minPlayers":1,"maxPlayers":6,"minPlayTime":30,"maxPlayTime":30,"playingTime":30,"ageRange":"10+","bestPlayers":"4","recPlayers":"1,2,3,4,5","bggRating":6.19,"bggWeight":1.85,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"178900","name":"Codenames","year":2015,"minPlayers":2,"maxPlayers":8,"minPlayTime":15,"maxPlayTime":15,"playingTime":15,"ageRange":"10+","bestPlayers":"6,8","recPlayers":"4,5,6,7,8","bggRating":7.52,"bggWeight":1.26,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"377061","name":"Coffee Rush","year":2023,"minPlayers":2,"maxPlayers":4,"minPlayTime":30,"maxPlayTime":30,"playingTime":30,"ageRange":"8+","bestPlayers":"3","recPlayers":"2,3,4","bggRating":7.1,"bggWeight":1.79,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":false,"wishlist":false},{"id":"147151","name":"Concept","year":2013,"minPlayers":4,"maxPlayers":12,"minPlayTime":40,"maxPlayTime":40,"playingTime":40,"ageRange":"10+","bestPlayers":"6","recPlayers":"3,4,5,6,7,8,9,10,11,12","bggRating":6.74,"bggWeight":1.38,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"2719","name":"Connect Four","year":1974,"minPlayers":2,"maxPlayers":2,"minPlayTime":10,"maxPlayTime":10,"playingTime":10,"ageRange":"5+","bestPlayers":"2","recPlayers":"2","bggRating":5.02,"bggWeight":1.18,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"352764","name":"Disney Villainous: Bigger and Badder","year":2022,"minPlayers":2,"maxPlayers":3,"minPlayTime":40,"maxPlayTime":60,"playingTime":60,"ageRange":"10+","bestPlayers":"2","recPlayers":"2,3","bggRating":7.39,"bggWeight":2.41,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"331050","name":"Disney Villainous: Despicable Plots","year":2021,"minPlayers":2,"maxPlayers":3,"minPlayTime":40,"maxPlayTime":60,"playingTime":60,"ageRange":"10+","bestPlayers":"3","recPlayers":"2,3","bggRating":7.45,"bggWeight":2.19,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"284760","name":"Disney Villainous: Evil Comes Prepared","year":2019,"minPlayers":2,"maxPlayers":3,"minPlayTime":40,"maxPlayTime":60,"playingTime":60,"ageRange":"10+","bestPlayers":"3","recPlayers":"2,3","bggRating":7.48,"bggWeight":2.31,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"391217","name":"Disney Villainous: Filled with Fright","year":2023,"minPlayers":2,"maxPlayers":4,"minPlayTime":40,"maxPlayTime":60,"playingTime":60,"ageRange":"","bestPlayers":"2","recPlayers":"2","bggRating":7.72,"bggWeight":2.25,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"299047","name":"Disney Villainous: Perfectly Wretched","year":2020,"minPlayers":2,"maxPlayers":3,"minPlayTime":40,"maxPlayTime":60,"playingTime":60,"ageRange":"10+","bestPlayers":"3","recPlayers":"2,3","bggRating":7.55,"bggWeight":2.3,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"411003","name":"Disney Villainous: Sugar and Spite","year":2024,"minPlayers":2,"maxPlayers":2,"minPlayTime":40,"maxPlayTime":40,"playingTime":40,"ageRange":"","bestPlayers":"2","recPlayers":"2","bggRating":7.61,"bggWeight":2.4,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"256382","name":"Disney Villainous: The Worst Takes it All","year":2018,"minPlayers":2,"maxPlayers":6,"minPlayTime":45,"maxPlayTime":120,"playingTime":120,"ageRange":"10+","bestPlayers":"3","recPlayers":"2,3,4","bggRating":6.91,"bggWeight":2.48,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"271518","name":"Disney Villainous: Wicked to the Core","year":2019,"minPlayers":2,"maxPlayers":3,"minPlayTime":40,"maxPlayTime":60,"playingTime":60,"ageRange":"10+","bestPlayers":"3","recPlayers":"2,3","bggRating":7.48,"bggWeight":2.38,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"337755","name":"Disney: Mickey and the Beanstalk","year":2021,"minPlayers":2,"maxPlayers":4,"minPlayTime":30,"maxPlayTime":30,"playingTime":30,"ageRange":"4–6","bestPlayers":"2,3","recPlayers":"2,3,4","bggRating":6.24,"bggWeight":1.75,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"309129","name":"Disney: The Haunted Mansion – Call of the Spirits Game","year":2020,"minPlayers":2,"maxPlayers":6,"minPlayTime":30,"maxPlayTime":30,"playingTime":30,"ageRange":"6+","bestPlayers":"4","recPlayers":"3,4,5,6","bggRating":6.93,"bggWeight":1.87,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"260300","name":"Dungeon Mayhem","year":2018,"minPlayers":2,"maxPlayers":4,"minPlayTime":10,"maxPlayTime":10,"playingTime":10,"ageRange":"6+","bestPlayers":"4","recPlayers":"2,3,4","bggRating":6.86,"bggWeight":1.15,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"172225","name":"Exploding Kittens","year":2015,"minPlayers":2,"maxPlayers":5,"minPlayTime":15,"maxPlayTime":15,"playingTime":15,"ageRange":"8+","bestPlayers":"4,5","recPlayers":"3,4,5","bggRating":6.07,"bggWeight":1.08,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"258","name":"Fluxx","year":1997,"minPlayers":2,"maxPlayers":6,"minPlayTime":5,"maxPlayTime":30,"playingTime":30,"ageRange":"8+","bestPlayers":"4","recPlayers":"2,3,4,5,6","bggRating":5.68,"bggWeight":1.39,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"136063","name":"Forbidden Desert","year":2013,"minPlayers":2,"maxPlayers":5,"minPlayTime":45,"maxPlayTime":45,"playingTime":45,"ageRange":"8+","bestPlayers":"4","recPlayers":"1,2,3,4,5","bggRating":7.06,"bggWeight":2.04,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"65244","name":"Forbidden Island","year":2010,"minPlayers":2,"maxPlayers":4,"minPlayTime":30,"maxPlayTime":30,"playingTime":30,"ageRange":"8+","bestPlayers":"4","recPlayers":"1,2,3,4","bggRating":6.75,"bggWeight":1.74,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"380226","name":"Forbidden Jungle","year":2023,"minPlayers":2,"maxPlayers":5,"minPlayTime":45,"maxPlayTime":45,"playingTime":45,"ageRange":"8+","bestPlayers":"3","recPlayers":"2,3,4","bggRating":7.3,"bggWeight":2.09,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"357190","name":"Funky Fungi","year":2022,"minPlayers":2,"maxPlayers":4,"minPlayTime":30,"maxPlayTime":30,"playingTime":30,"ageRange":"","bestPlayers":"4","recPlayers":"3,4","bggRating":6.21,"bggWeight":1.67,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"205610","name":"A Game of Thrones: Hand of the King","year":2016,"minPlayers":2,"maxPlayers":4,"minPlayTime":15,"maxPlayTime":30,"playingTime":30,"ageRange":"10+","bestPlayers":"2","recPlayers":"2,3,4","bggRating":6.57,"bggWeight":1.23,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"343981","name":"Gathering of the Wicked","year":2021,"minPlayers":6,"maxPlayers":12,"minPlayTime":30,"maxPlayTime":30,"playingTime":30,"ageRange":"8+","bestPlayers":"10","recPlayers":"7,8,9,10,11,12","bggRating":6.61,"bggWeight":1.67,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"13230","name":"Gobblers","year":2003,"minPlayers":2,"maxPlayers":2,"minPlayTime":5,"maxPlayTime":5,"playingTime":5,"ageRange":"4+","bestPlayers":"2","recPlayers":"2","bggRating":6.32,"bggWeight":1.3,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"929","name":"The Great Dalmuti","year":1995,"minPlayers":4,"maxPlayers":8,"minPlayTime":60,"maxPlayTime":60,"playingTime":60,"ageRange":"8+","bestPlayers":"6,7","recPlayers":"5,6,7,8","bggRating":6.6,"bggWeight":1.28,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"2655","name":"Hive","year":2001,"minPlayers":2,"maxPlayers":2,"minPlayTime":20,"maxPlayTime":20,"playingTime":20,"ageRange":"8+","bestPlayers":"2","recPlayers":"2","bggRating":7.32,"bggWeight":2.31,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"2932","name":"Hnefatafl","year":400,"minPlayers":2,"maxPlayers":2,"minPlayTime":20,"maxPlayTime":20,"playingTime":20,"ageRange":"6+","bestPlayers":"2","recPlayers":"2","bggRating":6.68,"bggWeight":2.5,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":false,"wishlist":false},{"id":"302520","name":"Hues and Cues","year":2020,"minPlayers":3,"maxPlayers":10,"minPlayTime":30,"maxPlayTime":30,"playingTime":30,"ageRange":"8+","bestPlayers":"6,8","recPlayers":"3,4,5,6,7,8,9,10","bggRating":6.44,"bggWeight":1.06,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"54043","name":"Jaipur","year":2009,"minPlayers":2,"maxPlayers":2,"minPlayTime":30,"maxPlayTime":30,"playingTime":30,"ageRange":"8+","bestPlayers":"2","recPlayers":"2","bggRating":7.48,"bggWeight":1.46,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"2452","name":"Jenga","year":1983,"minPlayers":1,"maxPlayers":8,"minPlayTime":20,"maxPlayTime":20,"playingTime":20,"ageRange":"5+","bestPlayers":"4","recPlayers":"2,3,4,5,6","bggRating":5.66,"bggWeight":1.1,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"193621","name":"Joking Hazard","year":2016,"minPlayers":3,"maxPlayers":10,"minPlayTime":30,"maxPlayTime":90,"playingTime":90,"ageRange":"16+","bestPlayers":"5","recPlayers":"3,4,5,6,7","bggRating":6.21,"bggWeight":1.03,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"2448","name":"Kalah","year":1940,"minPlayers":2,"maxPlayers":2,"minPlayTime":10,"maxPlayTime":10,"playingTime":10,"ageRange":"6+","bestPlayers":"2","recPlayers":"2","bggRating":6.01,"bggWeight":1.6,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"70323","name":"King of Tokyo","year":2011,"minPlayers":2,"maxPlayers":6,"minPlayTime":30,"maxPlayTime":30,"playingTime":30,"ageRange":"6+","bestPlayers":"4,5","recPlayers":"3,4,5,6","bggRating":7.11,"bggWeight":1.48,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"147183","name":"King of Tokyo: Halloween","year":2013,"minPlayers":2,"maxPlayers":6,"minPlayTime":30,"maxPlayTime":30,"playingTime":30,"ageRange":"8+","bestPlayers":"4,5","recPlayers":"3,4,5,6","bggRating":7.21,"bggWeight":1.71,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"336929","name":"Land vs Sea","year":2021,"minPlayers":2,"maxPlayers":4,"minPlayTime":40,"maxPlayTime":40,"playingTime":40,"ageRange":"8+","bestPlayers":"2","recPlayers":"2,3,4","bggRating":7.04,"bggWeight":1.75,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"335869","name":"A Little Wordy","year":2021,"minPlayers":2,"maxPlayers":2,"minPlayTime":5,"maxPlayTime":15,"playingTime":15,"ageRange":"8+","bestPlayers":"2","recPlayers":"2","bggRating":6.67,"bggWeight":1.26,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"172555","name":"Loaded Questions Party","year":2014,"minPlayers":4,"maxPlayers":6,"minPlayTime":45,"maxPlayTime":60,"playingTime":60,"ageRange":"","bestPlayers":"","recPlayers":"4,5,6","bggRating":5.85,"bggWeight":1.0,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"379005","name":"The Lord of the Rings Adventure Book Game","year":2023,"minPlayers":1,"maxPlayers":4,"minPlayTime":20,"maxPlayTime":160,"playingTime":160,"ageRange":"10+","bestPlayers":"1,2","recPlayers":"1,2,3","bggRating":7.13,"bggWeight":2.14,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":false,"wishlist":false},{"id":"5878","name":"Loteria","year":1887,"minPlayers":2,"maxPlayers":10,"minPlayTime":10,"maxPlayTime":10,"playingTime":10,"ageRange":"6+","bestPlayers":"","recPlayers":"2,3,4,5,6,7,8,9,10","bggRating":5.85,"bggWeight":1.14,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"129622","name":"Love Letter","year":2012,"minPlayers":2,"maxPlayers":4,"minPlayTime":20,"maxPlayTime":20,"playingTime":20,"ageRange":"8+","bestPlayers":"4","recPlayers":"3,4","bggRating":7.23,"bggWeight":1.18,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"406459","name":"Love Letter: Bridgerton","year":2024,"minPlayers":2,"maxPlayers":6,"minPlayTime":20,"maxPlayTime":20,"playingTime":20,"ageRange":"10+","bestPlayers":"3","recPlayers":"3,4,5","bggRating":6.81,"bggWeight":1.33,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"96848","name":"Mage Knight Board Game","year":2011,"minPlayers":1,"maxPlayers":4,"minPlayTime":60,"maxPlayTime":240,"playingTime":240,"ageRange":"14+","bestPlayers":"1,2","recPlayers":"1,2,3","bggRating":8.08,"bggWeight":4.38,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"2093","name":"Mahjong","year":1850,"minPlayers":3,"maxPlayers":4,"minPlayTime":120,"maxPlayTime":120,"playingTime":120,"ageRange":"10+","bestPlayers":"4","recPlayers":"4","bggRating":7.07,"bggWeight":2.58,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"348406","name":"Marvel Dice Throne","year":2022,"minPlayers":2,"maxPlayers":6,"minPlayTime":20,"maxPlayTime":40,"playingTime":40,"ageRange":"8+","bestPlayers":"2","recPlayers":"2,3,4","bggRating":7.95,"bggWeight":2.15,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":false,"wishlist":false},{"id":"302336","name":"Marvel Villainous: Infinite Power","year":2020,"minPlayers":2,"maxPlayers":4,"minPlayTime":40,"maxPlayTime":80,"playingTime":80,"ageRange":"12+","bestPlayers":"3","recPlayers":"2,3,4","bggRating":6.71,"bggWeight":2.71,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"335528","name":"Marvel Villainous: Mischief & Malice","year":2021,"minPlayers":2,"maxPlayers":3,"minPlayTime":40,"maxPlayTime":80,"playingTime":80,"ageRange":"10+","bestPlayers":"3","recPlayers":"2,3","bggRating":7.25,"bggWeight":2.88,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"379056","name":"Marvel Villainous: Twisted Ambitions","year":2023,"minPlayers":2,"maxPlayers":3,"minPlayTime":40,"maxPlayTime":60,"playingTime":60,"ageRange":"","bestPlayers":"3","recPlayers":"2,3","bggRating":7.35,"bggWeight":2.6,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"369671","name":"Marvel Villainous: We Are Venom","year":2022,"minPlayers":0,"maxPlayers":0,"minPlayTime":0,"maxPlayTime":0,"playingTime":0,"ageRange":"","bestPlayers":"","recPlayers":"","bggRating":7.4,"bggWeight":3.0,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"347748","name":"Mickey and Friends: Food Fight!","year":2021,"minPlayers":3,"maxPlayers":5,"minPlayTime":10,"maxPlayTime":20,"playingTime":20,"ageRange":"6+","bestPlayers":"3","recPlayers":"3,4","bggRating":6.69,"bggWeight":1.0,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"223222","name":"Midnight Taboo","year":2016,"minPlayers":4,"maxPlayers":99,"minPlayTime":20,"maxPlayTime":20,"playingTime":20,"ageRange":"18+","bestPlayers":"6,8,10","recPlayers":"4,5,6,7,8,9,10,11,12,13,14,16,18,20","bggRating":5.94,"bggWeight":1.25,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"371482","name":"Miller Zoo","year":2022,"minPlayers":1,"maxPlayers":6,"minPlayTime":30,"maxPlayTime":30,"playingTime":30,"ageRange":"8+","bestPlayers":"4","recPlayers":"1,2,3,4","bggRating":6.9,"bggWeight":1.83,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"1406","name":"Monopoly","year":1935,"minPlayers":2,"maxPlayers":8,"minPlayTime":60,"maxPlayTime":180,"playingTime":180,"ageRange":"8+","bestPlayers":"4","recPlayers":"3,4,5,6","bggRating":4.37,"bggWeight":1.62,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"40398","name":"Monopoly Deal Card Game","year":2008,"minPlayers":2,"maxPlayers":5,"minPlayTime":15,"maxPlayTime":15,"playingTime":15,"ageRange":"8+","bestPlayers":"4","recPlayers":"2,3,4,5","bggRating":6.33,"bggWeight":1.31,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"145842","name":"Monopoly Empire","year":2013,"minPlayers":2,"maxPlayers":4,"minPlayTime":10,"maxPlayTime":25,"playingTime":25,"ageRange":"8–12","bestPlayers":"4","recPlayers":"3,4","bggRating":5.57,"bggWeight":1.18,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"312346","name":"Munchkin Disney","year":2020,"minPlayers":3,"maxPlayers":6,"minPlayTime":40,"maxPlayTime":60,"playingTime":60,"ageRange":"","bestPlayers":"3","recPlayers":"3,4","bggRating":6.39,"bggWeight":2.0,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"342894","name":"Mythic Mischief","year":2022,"minPlayers":1,"maxPlayers":4,"minPlayTime":45,"maxPlayTime":90,"playingTime":90,"ageRange":"10+","bestPlayers":"2","recPlayers":"1,2,4","bggRating":7.53,"bggWeight":2.53,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":false,"wishlist":false},{"id":"163166","name":"One Night Ultimate Werewolf: Daybreak","year":2015,"minPlayers":3,"maxPlayers":10,"minPlayTime":10,"maxPlayTime":10,"playingTime":10,"ageRange":"8+","bestPlayers":"6,7,8","recPlayers":"4,5,6,7,8,9","bggRating":7.28,"bggWeight":1.41,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"266524","name":"PARKS","year":2019,"minPlayers":1,"maxPlayers":5,"minPlayTime":30,"maxPlayTime":60,"playingTime":60,"ageRange":"10+","bestPlayers":"3","recPlayers":"1,2,3,4","bggRating":7.62,"bggWeight":2.12,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"298729","name":"PARKS: Nightfall","year":2021,"minPlayers":1,"maxPlayers":5,"minPlayTime":40,"maxPlayTime":70,"playingTime":70,"ageRange":"10+","bestPlayers":"3","recPlayers":"1,2,3,4","bggRating":8.14,"bggWeight":2.24,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"358854","name":"PARKS: Wildlife","year":2022,"minPlayers":1,"maxPlayers":5,"minPlayTime":40,"maxPlayTime":70,"playingTime":70,"ageRange":"8+","bestPlayers":"2,3","recPlayers":"1,2,3,4","bggRating":7.96,"bggWeight":2.24,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"163412","name":"Patchwork","year":2014,"minPlayers":2,"maxPlayers":2,"minPlayTime":15,"maxPlayTime":30,"playingTime":30,"ageRange":"6+","bestPlayers":"2","recPlayers":"2","bggRating":7.58,"bggWeight":1.6,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"124047","name":"Pirate Dice: Voyage on the Rolling Seas","year":2012,"minPlayers":2,"maxPlayers":4,"minPlayTime":30,"maxPlayTime":60,"playingTime":60,"ageRange":"10+","bestPlayers":"4","recPlayers":"2,3,4","bggRating":6.11,"bggWeight":1.68,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"281094","name":"Plunder: A Pirate's Life","year":2020,"minPlayers":2,"maxPlayers":6,"minPlayTime":40,"maxPlayTime":120,"playingTime":120,"ageRange":"8+","bestPlayers":"4","recPlayers":"2,3,4,5,6","bggRating":6.83,"bggWeight":1.91,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":false,"wishlist":false},{"id":"180974","name":"Potion Explosion","year":2015,"minPlayers":2,"maxPlayers":4,"minPlayTime":30,"maxPlayTime":45,"playingTime":45,"ageRange":"8+","bestPlayers":"3","recPlayers":"2,3,4","bggRating":7.12,"bggWeight":1.78,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"2651","name":"Power Grid","year":2004,"minPlayers":2,"maxPlayers":6,"minPlayTime":120,"maxPlayTime":120,"playingTime":120,"ageRange":"12+","bestPlayers":"4,5","recPlayers":"3,4,5,6","bggRating":7.8,"bggWeight":3.25,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"368465","name":"Qawale","year":2022,"minPlayers":2,"maxPlayers":2,"minPlayTime":15,"maxPlayTime":15,"playingTime":15,"ageRange":"6+","bestPlayers":"2","recPlayers":"2","bggRating":6.93,"bggWeight":1.17,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"244521","name":"Quacks","year":2018,"minPlayers":2,"maxPlayers":4,"minPlayTime":45,"maxPlayTime":45,"playingTime":45,"ageRange":"8+","bestPlayers":"4","recPlayers":"2,3,4","bggRating":7.8,"bggWeight":1.94,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":false,"wishlist":false},{"id":"624","name":"Quoridor","year":1997,"minPlayers":2,"maxPlayers":4,"minPlayTime":15,"maxPlayTime":15,"playingTime":15,"ageRange":"8+","bestPlayers":"2","recPlayers":"2,4","bggRating":6.65,"bggWeight":1.82,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"131260","name":"Qwixx","year":2012,"minPlayers":2,"maxPlayers":5,"minPlayTime":15,"maxPlayTime":15,"playingTime":15,"ageRange":"8+","bestPlayers":"3,4","recPlayers":"2,3,4,5","bggRating":6.88,"bggWeight":1.11,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":true,"wishlist":false},{"id":"151835","name":"Qwixx Card Game","year":2014,"minPlayers":2,"maxPlayers":5,"minPlayTime":15,"maxPlayTime":15,"playingTime":15,"ageRange":"8+","bestPlayers":"2","recPlayers":"2,3,4","bggRating":6.39,"bggWeight":1.21,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":true,"wishlist":false},{"id":"265524","name":"Ramen Fury","year":2019,"minPlayers":2,"maxPlayers":5,"minPlayTime":30,"maxPlayTime":30,"playingTime":30,"ageRange":"8+","bestPlayers":"4","recPlayers":"2,3,4,5","bggRating":6.23,"bggWeight":1.22,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"192153","name":"Reign of Cthulhu","year":2016,"minPlayers":2,"maxPlayers":4,"minPlayTime":40,"maxPlayTime":40,"playingTime":40,"ageRange":"10+","bestPlayers":"4","recPlayers":"1,2,3,4","bggRating":7.36,"bggWeight":2.17,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"246532","name":"Rick and Morty: The Pickle Rick Game","year":2018,"minPlayers":1,"maxPlayers":2,"minPlayTime":30,"maxPlayTime":45,"playingTime":45,"ageRange":"12+","bestPlayers":"2","recPlayers":"2","bggRating":6.81,"bggWeight":1.64,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"1790","name":"Rollout: The Game of the Risk-Takers","year":1987,"minPlayers":2,"maxPlayers":6,"minPlayTime":120,"maxPlayTime":120,"playingTime":120,"ageRange":"10+","bestPlayers":"4","recPlayers":"3,4,5,6","bggRating":5.64,"bggWeight":2.12,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":true,"wishlist":false},{"id":"199561","name":"Sagrada","year":2017,"minPlayers":1,"maxPlayers":4,"minPlayTime":30,"maxPlayTime":45,"playingTime":45,"ageRange":"8+","bestPlayers":"2","recPlayers":"1,2,3,4","bggRating":7.47,"bggWeight":1.92,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":false,"wishlist":false},{"id":"315631","name":"Santorini: New York","year":2020,"minPlayers":2,"maxPlayers":5,"minPlayTime":15,"maxPlayTime":30,"playingTime":30,"ageRange":"8+","bestPlayers":"3","recPlayers":"2,3,4,5","bggRating":6.94,"bggWeight":1.94,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":false,"wishlist":false},{"id":"2381","name":"Scattergories","year":1988,"minPlayers":2,"maxPlayers":6,"minPlayTime":30,"maxPlayTime":30,"playingTime":30,"ageRange":"10+","bestPlayers":"4,5,6","recPlayers":"2,3,4,5,6","bggRating":6.3,"bggWeight":1.36,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"320","name":"Scrabble","year":1948,"minPlayers":2,"maxPlayers":4,"minPlayTime":90,"maxPlayTime":90,"playingTime":90,"ageRange":"10+","bestPlayers":"2","recPlayers":"2,3,4","bggRating":6.27,"bggWeight":2.05,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"40508","name":"Scrabble Slam!","year":2008,"minPlayers":2,"maxPlayers":4,"minPlayTime":15,"maxPlayTime":15,"playingTime":15,"ageRange":"8+","bestPlayers":"4","recPlayers":"2,3,4","bggRating":5.15,"bggWeight":1.18,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"188834","name":"Secret Hitler","year":2016,"minPlayers":5,"maxPlayers":10,"minPlayTime":45,"maxPlayTime":45,"playingTime":45,"ageRange":"14+","bestPlayers":"8,10","recPlayers":"6,7,8,9,10","bggRating":7.49,"bggWeight":1.74,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"1198","name":"SET","year":1988,"minPlayers":1,"maxPlayers":20,"minPlayTime":30,"maxPlayTime":30,"playingTime":30,"ageRange":"6+","bestPlayers":"3,4","recPlayers":"1,2,3,4,5,6,7,8","bggRating":6.51,"bggWeight":1.65,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"322601","name":"Set a Watch: Outriders Expansion","year":2021,"minPlayers":1,"maxPlayers":4,"minPlayTime":60,"maxPlayTime":75,"playingTime":75,"ageRange":"12+","bestPlayers":"1","recPlayers":"1,3,4","bggRating":7.66,"bggWeight":2.6,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"307386","name":"Set a Watch: Swords of the Coin","year":2021,"minPlayers":1,"maxPlayers":4,"minPlayTime":60,"maxPlayTime":75,"playingTime":75,"ageRange":"12+","bestPlayers":"1","recPlayers":"1,2","bggRating":7.62,"bggWeight":2.85,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"232830","name":"Shifty Eyed Spies","year":2017,"minPlayers":4,"maxPlayers":8,"minPlayTime":20,"maxPlayTime":20,"playingTime":20,"ageRange":"6+","bestPlayers":"6,7,8","recPlayers":"4,5,6,7,8","bggRating":6.73,"bggWeight":1.18,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"92415","name":"Skull","year":2011,"minPlayers":3,"maxPlayers":6,"minPlayTime":15,"maxPlayTime":45,"playingTime":45,"ageRange":"8+","bestPlayers":"5,6","recPlayers":"3,4,5,6","bggRating":7.17,"bggWeight":1.11,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"40692","name":"Small World","year":2009,"minPlayers":2,"maxPlayers":5,"minPlayTime":40,"maxPlayTime":80,"playingTime":80,"ageRange":"8+","bestPlayers":"4","recPlayers":"2,3,4,5","bggRating":7.19,"bggWeight":2.35,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":false,"wishlist":false},{"id":"154343","name":"Sorry! with Fire & Ice Power-ups","year":2013,"minPlayers":2,"maxPlayers":4,"minPlayTime":20,"maxPlayTime":60,"playingTime":60,"ageRange":"5+","bestPlayers":"4","recPlayers":"2,3,4","bggRating":4.97,"bggWeight":1.0,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"364073","name":"Splendor Duel","year":2022,"minPlayers":2,"maxPlayers":2,"minPlayTime":30,"maxPlayTime":30,"playingTime":30,"ageRange":"10+","bestPlayers":"2","recPlayers":"2","bggRating":7.88,"bggWeight":2.02,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"293296","name":"Splendor: Marvel","year":2020,"minPlayers":2,"maxPlayers":4,"minPlayTime":30,"maxPlayTime":30,"playingTime":30,"ageRange":"8+","bestPlayers":"3","recPlayers":"2,3,4","bggRating":7.56,"bggWeight":1.8,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"251658","name":"Sprawlopolis","year":2018,"minPlayers":1,"maxPlayers":4,"minPlayTime":15,"maxPlayTime":20,"playingTime":20,"ageRange":"8+","bestPlayers":"1","recPlayers":"1,2","bggRating":7.26,"bggWeight":1.8,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":false,"wishlist":false},{"id":"347029","name":"Sriracha: The Game","year":2021,"minPlayers":2,"maxPlayers":4,"minPlayTime":10,"maxPlayTime":15,"playingTime":15,"ageRange":"6","bestPlayers":"2","recPlayers":"2,3,4","bggRating":5.31,"bggWeight":1.0,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"358800","name":"Star Wars Villainous: Power of the Dark Side","year":2022,"minPlayers":2,"maxPlayers":4,"minPlayTime":50,"maxPlayTime":50,"playingTime":50,"ageRange":"12+","bestPlayers":"2","recPlayers":"2,3","bggRating":7.0,"bggWeight":2.59,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"417130","name":"Star Wars Villainous: Revenge at Last","year":2024,"minPlayers":2,"maxPlayers":2,"minPlayTime":50,"maxPlayTime":50,"playingTime":50,"ageRange":"","bestPlayers":"2","recPlayers":"2","bggRating":7.3,"bggWeight":2.83,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"387836","name":"Star Wars Villainous: Scum and Villainy","year":2023,"minPlayers":2,"maxPlayers":3,"minPlayTime":50,"maxPlayTime":50,"playingTime":50,"ageRange":"8+","bestPlayers":"3","recPlayers":"2,3","bggRating":7.5,"bggWeight":2.67,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"353470","name":"Star Wars: Jabba's Palace – A Love Letter Game","year":2022,"minPlayers":2,"maxPlayers":6,"minPlayTime":20,"maxPlayTime":20,"playingTime":20,"ageRange":"8+","bestPlayers":"4,5","recPlayers":"3,4,5,6","bggRating":7.19,"bggWeight":1.25,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"307561","name":"Steam Up: A Feast of Dim Sum","year":2023,"minPlayers":2,"maxPlayers":5,"minPlayTime":40,"maxPlayTime":60,"playingTime":60,"ageRange":"8+","bestPlayers":"4","recPlayers":"3,4,5","bggRating":6.67,"bggWeight":1.57,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"161614","name":"Stockpile","year":2015,"minPlayers":2,"maxPlayers":5,"minPlayTime":45,"maxPlayTime":45,"playingTime":45,"ageRange":"12+","bestPlayers":"4,5","recPlayers":"3,4,5","bggRating":7.42,"bggWeight":2.13,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":false,"wishlist":false},{"id":"146508","name":"T.I.M.E Stories","year":2015,"minPlayers":2,"maxPlayers":4,"minPlayTime":90,"maxPlayTime":90,"playingTime":90,"ageRange":"14+","bestPlayers":"4","recPlayers":"2,3,4","bggRating":7.34,"bggWeight":2.59,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"1111","name":"Taboo","year":1989,"minPlayers":4,"maxPlayers":10,"minPlayTime":20,"maxPlayTime":20,"playingTime":20,"ageRange":"10+","bestPlayers":"6,8","recPlayers":"4,5,6,7,8,9,10","bggRating":6.32,"bggWeight":1.2,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"129556","name":"Tapple","year":2012,"minPlayers":2,"maxPlayers":10,"minPlayTime":30,"maxPlayTime":30,"playingTime":30,"ageRange":"8+","bestPlayers":"4,5,6","recPlayers":"2,3,4,5,6,7,8","bggRating":6.45,"bggWeight":1.02,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"9209","name":"Ticket to Ride","year":2004,"minPlayers":2,"maxPlayers":5,"minPlayTime":30,"maxPlayTime":60,"playingTime":60,"ageRange":"8+","bestPlayers":"4","recPlayers":"2,3,4,5","bggRating":7.39,"bggWeight":1.82,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"331787","name":"Tiny Epic Dungeons","year":2021,"minPlayers":1,"maxPlayers":4,"minPlayTime":30,"maxPlayTime":60,"playingTime":60,"ageRange":"12+","bestPlayers":"1,2","recPlayers":"1,2,3,4","bggRating":7.44,"bggWeight":3.11,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"309430","name":"Tiny Epic Pirates","year":2021,"minPlayers":1,"maxPlayers":4,"minPlayTime":30,"maxPlayTime":60,"playingTime":60,"ageRange":"12+","bestPlayers":"3","recPlayers":"1,2,3,4","bggRating":7.0,"bggWeight":2.88,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":false,"wishlist":false},{"id":"123540","name":"Tokaido","year":2012,"minPlayers":1,"maxPlayers":5,"minPlayTime":45,"maxPlayTime":45,"playingTime":45,"ageRange":"8+","bestPlayers":"4","recPlayers":"2,3,4,5","bggRating":6.91,"bggWeight":1.74,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":false,"wishlist":false},{"id":"338628","name":"Trails","year":2021,"minPlayers":2,"maxPlayers":4,"minPlayTime":20,"maxPlayTime":40,"playingTime":40,"ageRange":"8+","bestPlayers":"2","recPlayers":"2,3,4","bggRating":7.02,"bggWeight":1.86,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"146880","name":"Train Heist","year":2013,"minPlayers":2,"maxPlayers":4,"minPlayTime":30,"maxPlayTime":60,"playingTime":60,"ageRange":"8+","bestPlayers":"3","recPlayers":"1,2,3,4","bggRating":6.39,"bggWeight":2.17,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":false,"wishlist":false},{"id":"233078","name":"Twilight Imperium: Fourth Edition","year":2017,"minPlayers":3,"maxPlayers":6,"minPlayTime":240,"maxPlayTime":480,"playingTime":480,"ageRange":"14+","bestPlayers":"6","recPlayers":"3,4,5,6","bggRating":8.56,"bggWeight":4.35,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":false,"wishlist":false},{"id":"268864","name":"Undaunted: Normandy","year":2019,"minPlayers":2,"maxPlayers":2,"minPlayTime":45,"maxPlayTime":60,"playingTime":60,"ageRange":"12+","bestPlayers":"2","recPlayers":"2","bggRating":7.77,"bggWeight":2.27,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":false,"wishlist":false},{"id":"245353","name":"Unlock!: Secret Adventures – Tombstone Express","year":2018,"minPlayers":1,"maxPlayers":6,"minPlayTime":60,"maxPlayTime":60,"playingTime":60,"ageRange":"10+","bestPlayers":"2,3","recPlayers":"1,2,3,4","bggRating":6.66,"bggWeight":2.13,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"2223","name":"UNO","year":1971,"minPlayers":2,"maxPlayers":10,"minPlayTime":30,"maxPlayTime":30,"playingTime":30,"ageRange":"5+","bestPlayers":"4,5,6","recPlayers":"3,4,5,6,7,8","bggRating":5.48,"bggWeight":1.1,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"7601","name":"Urban Myth","year":2002,"minPlayers":2,"maxPlayers":6,"minPlayTime":45,"maxPlayTime":45,"playingTime":45,"ageRange":"10–12","bestPlayers":"4,6","recPlayers":"4,5,6","bggRating":3.37,"bggWeight":1.19,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"249259","name":"War Chest","year":2018,"minPlayers":2,"maxPlayers":4,"minPlayTime":30,"maxPlayTime":30,"playingTime":30,"ageRange":"10+","bestPlayers":"2","recPlayers":"2,4","bggRating":7.82,"bggWeight":2.32,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"233867","name":"Welcome To...","year":2018,"minPlayers":1,"maxPlayers":100,"minPlayTime":25,"maxPlayTime":25,"playingTime":25,"ageRange":"10+","bestPlayers":"3,4","recPlayers":"1,2,3,4,5,6,7,8,9,10","bggRating":7.51,"bggWeight":1.84,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"282922","name":"Windward","year":2020,"minPlayers":1,"maxPlayers":5,"minPlayTime":30,"maxPlayTime":90,"playingTime":90,"ageRange":"12+","bestPlayers":"3","recPlayers":"2,3,4","bggRating":6.9,"bggWeight":2.38,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"266192","name":"Wingspan","year":2019,"minPlayers":1,"maxPlayers":5,"minPlayTime":40,"maxPlayTime":70,"playingTime":70,"ageRange":"10+","bestPlayers":"3","recPlayers":"1,2,3,4","bggRating":8.0,"bggWeight":2.48,"myRating":0.0,"plays":0,"owned":true,"wanttoplay":false,"wishlist":false},{"id":"410201","name":"Wyrmspan","year":2024,"minPlayers":1,"maxPlayers":5,"minPlayTime":90,"maxPlayTime":90,"playingTime":90,"ageRange":"12+","bestPlayers":"3","recPlayers":"1,2,3,4","bggRating":7.96,"bggWeight":2.82,"myRating":0.0,"plays":0,"owned":false,"wanttoplay":false,"wishlist":false}]</script>
+
+<script>
+(() => {
+  const GAMES = JSON.parse(document.getElementById('games-data').textContent);
+  const CACHE_KEY = 'bgg_enrichment_v2';
+  const CACHE_TTL_MS = 1000 * 60 * 60 * 24 * 30;
+
+  const fmtTime = g => {
+    const mn = g.minPlayTime || g.playingTime;
+    const mx = g.maxPlayTime || g.playingTime;
+    if (!mn && !mx) return '—';
+    if (mn === mx || !mn) return `${mx} MIN`;
+    return `${mn}–${mx} MIN`;
+  };
+  const fmtPlayers = g => {
+    const a = g.minPlayers, b = g.maxPlayers;
+    if (!a && !b) return '—';
+    if (a === b || !a) return `${b}`;
+    if (b >= 99) return `${a}+`;
+    return `${a}–${b}`;
+  };
+  const weightLabel = w => w >= 3.5 ? 'Heavy' : w >= 2.3 ? 'Medium' : w >= 1.0 ? 'Light' : '—';
+  const weightBucket = w => w >= 3.5 ? 'heavy' : w >= 2.3 ? 'medium' : w > 0 ? 'light' : 'unknown';
+  const timeBucket = g => {
+    const t = g.maxPlayTime || g.playingTime || g.minPlayTime;
+    if (!t) return 'unknown';
+    if (t <= 30) return 'short';
+    if (t <= 60) return 'med';
+    if (t <= 120) return 'long';
+    return 'epic';
+  };
+  const matchPlayers = (g, v) => {
+    if (v === 'any') return true;
+    if (v === '6+') return (g.maxPlayers || 0) >= 6;
+    const n = parseInt(v, 10);
+    return g.minPlayers <= n && g.maxPlayers >= n;
+  };
+  const matchTime = (g, v) => v === 'any' || timeBucket(g) === v;
+  const matchWeight = (g, v) => v === 'any' || weightBucket(g.bggWeight) === v;
+  const hashColor = (str) => {
+    const palette = ['#FFD23F','#5FC9D6','#8AD66B','#FF6B6B','#E07AC4','#F4D95E','#FFA94D','#B79FE0','#4FB8A9','#FFB5A7'];
+    let h = 0;
+    for (let i = 0; i < str.length; i++) h = (h*31 + str.charCodeAt(i)) >>> 0;
+    return palette[h % palette.length];
+  };
+  const escapeHtml = s => String(s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+  const state = {
+    search:'', players:'any', time:'any', weight:'any', sort:'name', collection:'all',
+    enrichment:{},
+  };
+
+  function loadCache(){
+    try{
+      const raw = localStorage.getItem(CACHE_KEY);
+      if(!raw) return {};
+      const obj = JSON.parse(raw);
+      if(Date.now() - obj.ts > CACHE_TTL_MS) return {};
+      return obj.data || {};
+    }catch{ return {}; }
+  }
+  function saveCache(data){
+    try{ localStorage.setItem(CACHE_KEY, JSON.stringify({ts:Date.now(), data})); }catch{}
+  }
+  async function enrichFromBGG(){
+    const cache = loadCache();
+    const need = GAMES.filter(g => !cache[g.id]).map(g => g.id);
+    state.enrichment = cache;
+    if(need.length === 0){ setStatus(`Loaded ${GAMES.length} games · BGG art from cache`); render(); return; }
+    setStatus(`Fetching cover art & descriptions from BoardGameGeek… (0/${need.length})`);
+    const BATCH = 20;
+    let done = 0;
+    for(let i=0; i<need.length; i+=BATCH){
+      const chunk = need.slice(i, i+BATCH);
+      try{
+        const bggUrl = `https://boardgamegeek.com/xmlapi2/thing?id=${chunk.join(',')}&stats=1`;
+        // Routed through public CORS proxy because BGG's XMLAPI2 does not send CORS headers.
+        // file:// origin would otherwise be blocked. allorigins.win returns raw XML with proper CORS.
+        const resp = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(bggUrl)}`);
+        if(!resp.ok) throw new Error('HTTP '+resp.status);
+        const xmlText = await resp.text();
+        const doc = new DOMParser().parseFromString(xmlText, 'application/xml');
+        doc.querySelectorAll('item').forEach(item => {
+          const id = item.getAttribute('id');
+          const image = item.querySelector('image')?.textContent || '';
+          const thumb = item.querySelector('thumbnail')?.textContent || '';
+          const desc = (item.querySelector('description')?.textContent || '').replace(/&#10;/g,' ').replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();
+          const cats = [...item.querySelectorAll('link[type="boardgamecategory"]')].map(l=>l.getAttribute('value'));
+          const mechs = [...item.querySelectorAll('link[type="boardgamemechanic"]')].map(l=>l.getAttribute('value'));
+          const designers = [...item.querySelectorAll('link[type="boardgamedesigner"]')].map(l=>l.getAttribute('value'));
+          state.enrichment[id] = {image, thumbnail:thumb, description:desc, categories:cats, mechanics:mechs, designers};
+        });
+        done += chunk.length;
+        setStatus(`Fetching cover art & descriptions from BoardGameGeek… (${done}/${need.length})`);
+        saveCache(state.enrichment);
+        render();
+        await new Promise(r => setTimeout(r, 1200));
+      }catch(e){
+        console.warn('BGG fetch failed', e);
+        setStatus(`Couldn\u2019t reach BoardGameGeek via CORS proxy (${e.message}). Showing stylized covers. Try refreshing in a few minutes \u2014 the proxy may be rate-limited.`, true);
+        return;
+      }
+    }
+    setStatus(`Loaded ${GAMES.length} games · ${Object.keys(state.enrichment).length} enriched from BGG`);
+  }
+  function setStatus(msg, warn){
+    const el = document.getElementById('status');
+    el.textContent = msg;
+    el.classList.toggle('warn', !!warn);
+  }
+
+  function filtered(){
+    let list = GAMES.filter(g => {
+      if(state.search && !g.name.toLowerCase().includes(state.search.toLowerCase())) return false;
+      if(!matchPlayers(g, state.players)) return false;
+      if(!matchTime(g, state.time)) return false;
+      if(!matchWeight(g, state.weight)) return false;
+      if(state.collection === 'owned' && !g.owned) return false;
+      if(state.collection === 'wanttoplay' && !g.wanttoplay) return false;
+      if(state.collection === 'wishlist' && !g.wishlist) return false;
+      return true;
+    });
+    const sortFns = {
+      name:(a,b)=>a.name.localeCompare(b.name),
+      rating:(a,b)=>(b.bggRating||0)-(a.bggRating||0),
+      weight:(a,b)=>(b.bggWeight||0)-(a.bggWeight||0),
+      year:(a,b)=>(b.year||0)-(a.year||0),
+      plays:(a,b)=>(b.plays||0)-(a.plays||0),
+    };
+    list.sort(sortFns[state.sort] || sortFns.name);
+    return list;
+  }
+
+  function renderCard(g){
+    const e = state.enrichment[g.id] || {};
+    const img = e.thumbnail || e.image || '';
+    const cover = img ? `<img loading="lazy" src="${escapeHtml(img)}" alt="${escapeHtml(g.name)}">` : `<div class="placeholder-title">${escapeHtml(g.name)}</div>`;
+    const coverBg = img ? '' : `background:${hashColor(g.name)};`;
+    const fav = g.plays >= 5 ? `<div class="fav-mark" title="${g.plays} plays">★</div>` : '';
+    const wtp = g.wanttoplay ? `<div class="wtp-mark" title="Want to play">♡</div>`
+              : g.wishlist   ? `<div class="wtp-mark wishlist" title="On wishlist">✦</div>` : '';
+    const wLabel = weightLabel(g.bggWeight);
+    return `
+      <div class="card" data-id="${g.id}">
+        <div class="cover" style="${coverBg}">${cover}${fav}${wtp}</div>
+        <div class="card-info">
+          <h3 class="card-title">${escapeHtml(g.name)}</h3>
+          <div class="card-meta">${g.year || ''}</div>
+          <div class="card-badges">
+            <span class="mini-badge players">\u{1F465} ${fmtPlayers(g)}</span>
+            <span class="mini-badge time">⏱ ${fmtTime(g).replace(' MIN','m')}</span>
+            ${wLabel !== '—' ? `<span class="mini-badge weight">◆ ${wLabel}</span>` : ''}
+            ${g.bggRating ? `<span class="mini-badge rating">★ ${g.bggRating.toFixed(1)}</span>` : ''}
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function render(){
+    const list = filtered();
+    document.getElementById('grid').innerHTML = list.map(renderCard).join('');
+    document.getElementById('emptyState').style.display = list.length ? 'none' : 'block';
+    document.getElementById('countPill').textContent = `${list.length} of ${GAMES.length} games`;
+  }
+
+  function renderDetailHTML(g, type){
+    const e = state.enrichment[g.id] || {};
+    const img = e.image || e.thumbnail || '';
+    const cats = (e.categories && e.categories.length) ? e.categories.slice(0,3).join(', ').toLowerCase() : 'tabletop';
+    const allTags = [...(e.categories||[]), ...(e.mechanics||[])].slice(0,8);
+    const limit = type === 'print' ? 380 : 480;
+    const cut = type === 'print' ? 370 : 470;
+    const desc = e.description ? (e.description.length > limit ? e.description.slice(0,cut).trim() + '…' : e.description) : `A ${weightLabel(g.bggWeight).toLowerCase()} game for ${fmtPlayers(g)} players. Plays in ${fmtTime(g).toLowerCase()}.`;
+    const coverImg = img ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(g.name)}"${type==='print'?' crossorigin="anonymous"':''}>` : `<div class="placeholder-title">${escapeHtml(g.name)}</div>`;
+    const coverBg = img ? '' : `background:${hashColor(g.name)};`;
+    const ageStr = g.ageRange || '—';
+    const ratingStr = g.bggRating ? `${g.bggRating.toFixed(1)}/10` : '—';
+    const weightStr = g.bggWeight ? `${g.bggWeight.toFixed(2)}/5` : '—';
+    const bestPlayersLine = g.bestPlayers ? `Best at ${g.bestPlayers} players` : '';
+    const playsLine = g.plays > 0 ? `Played ${g.plays}×` : 'Not yet played';
+    const designerLine = (e.designers && e.designers.length) ? `by ${e.designers.slice(0,2).join(', ')}` : '';
+    return {coverImg, coverBg, cats, allTags, desc, ageStr, ratingStr, weightStr, bestPlayersLine, playsLine, designerLine};
+  }
+
+  function openModal(id){
+    const g = GAMES.find(x => x.id === id);
+    if(!g) return;
+    const d = renderDetailHTML(g, 'modal');
+    const html = `
+      <button class="modal-close" id="closeModal" aria-label="Close">✕</button>
+      <button class="modal-print" id="printOne" data-id="${g.id}" title="Print this card">\u{1F5A8} PRINT CARD</button>
+      <div class="menu-banner">
+        <h2>${escapeHtml(g.name)} ${g.year ? `(${g.year})` : ''}</h2>
+        <div class="cats">Categorie(s): ${escapeHtml(d.cats)}</div>
+      </div>
+      <div class="dot-grid tr"></div>
+      <div class="menu-body">
+        <div class="menu-images">
+          <div class="menu-cover" style="${d.coverBg}">${d.coverImg}</div>
+          <div class="menu-secondary"><div class="floating-mark">\u{1F3B2}</div></div>
+        </div>
+        <p class="menu-desc">${escapeHtml(d.desc)}</p>
+        <div class="badges-row">
+          <div class="badge-cell"><div class="badge-label">Rating</div><div class="blob rating">${d.ratingStr}</div></div>
+          <div class="badge-cell"><div class="badge-label">Players</div><div class="blob players">${fmtPlayers(g)}</div></div>
+          <div class="badge-cell"><div class="badge-label">Complexity</div><div class="blob complexity">${d.weightStr}</div></div>
+          <div class="badge-cell"><div class="badge-label">Play Time</div><div class="blob time">${fmtTime(g)}</div></div>
+          <div class="badge-cell"><div class="badge-label">Age</div><div class="blob age">${escapeHtml(d.ageStr)}</div></div>
+        </div>
+        ${d.allTags.length ? `<div class="tags-row">${d.allTags.map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join('')}</div>` : ''}
+        <div class="meta-row">${[d.designerLine, d.bestPlayersLine, d.playsLine].filter(Boolean).join(' · ')}</div>
+        <div class="bgg-link-wrap"><a class="bgg-link" href="https://boardgamegeek.com/boardgame/${escapeHtml(g.id)}" target="_blank" rel="noopener noreferrer">View on BoardGameGeek →</a></div>
+      </div>`;
+    document.getElementById('modalContent').innerHTML = html;
+    document.getElementById('modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('closeModal').addEventListener('click', closeModal);
+    document.getElementById('printOne').addEventListener('click', () => printSingle(id));
+  }
+  function closeModal(){
+    document.getElementById('modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('modal').addEventListener('click', (e) => { if(e.target.id === 'modal') closeModal(); });
+  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeModal(); });
+
+  function renderPrintPage(g){
+    const d = renderDetailHTML(g, 'print');
+    return `
+      <section class="print-page" data-id="${g.id}">
+        <div class="dot-grid"></div>
+        <div class="print-banner">
+          <h2>${escapeHtml(g.name)} ${g.year ? `(${g.year})` : ''}</h2>
+          <div class="cats">Categorie(s): ${escapeHtml(d.cats)}</div>
+        </div>
+        <div class="print-images">
+          <div class="print-cover" style="${d.coverBg}">${d.coverImg}</div>
+          <div class="print-secondary"><div class="floating-mark">\u{1F3B2}</div></div>
+        </div>
+        <p class="print-desc">${escapeHtml(d.desc)}</p>
+        <div class="print-badges-row">
+          <div class="badge-cell"><div class="badge-label">Rating</div><div class="blob rating">${d.ratingStr}</div></div>
+          <div class="badge-cell"><div class="badge-label">Players</div><div class="blob players">${fmtPlayers(g)}</div></div>
+          <div class="badge-cell"><div class="badge-label">Complexity</div><div class="blob complexity">${d.weightStr}</div></div>
+          <div class="badge-cell"><div class="badge-label">Play Time</div><div class="blob time">${fmtTime(g)}</div></div>
+          <div class="badge-cell"><div class="badge-label">Age</div><div class="blob age">${escapeHtml(d.ageStr)}</div></div>
+        </div>
+        ${d.allTags.length ? `<div class="print-tags">${d.allTags.map(t=>`<span class="tag">${escapeHtml(t)}</span>`).join('')}</div>` : ''}
+        <div class="print-meta">
+          ${[d.designerLine, d.bestPlayersLine, d.playsLine].filter(Boolean).join(' · ')}
+          <span class="id-stamp">BGG #${g.id}</span>
+        </div>
+      </section>`;
+  }
+  function renderPrintPages(subset){
+    const list = subset || filtered();
+    document.getElementById('print-pages').innerHTML = list.map(renderPrintPage).join('');
+  }
+  async function waitForImages(){
+    const imgs = [...document.querySelectorAll('#print-pages img')];
+    await Promise.all(imgs.map(img => {
+      if(img.complete && img.naturalWidth > 0) return Promise.resolve();
+      return new Promise(res => {
+        const done = () => res();
+        img.addEventListener('load', done, {once:true});
+        img.addEventListener('error', done, {once:true});
+        setTimeout(done, 6000);
+      });
+    }));
+  }
+  async function printAll(){
+    const list = filtered();
+    if(!list.length){ alert('No games match the current filters.'); return; }
+    const enrichedCount = list.filter(g => state.enrichment[g.id]?.image).length;
+    if(enrichedCount < list.length){
+      const remaining = list.length - enrichedCount;
+      const ok = confirm(`Cover art still loading (${remaining} of ${list.length} games not yet fetched).\n\nPrint anyway? Missing covers will use stylized typographic placeholders.\n\nOK = print now · Cancel = wait for art`);
+      if(!ok) return;
+    }
+    renderPrintPages(list);
+    await waitForImages();
+    window.print();
+  }
+  async function printSingle(id){
+    const g = GAMES.find(x => x.id === id);
+    if(!g) return;
+    renderPrintPages([g]);
+    document.body.classList.add('print-single');
+    document.querySelectorAll('#print-pages .print-page').forEach(p => p.classList.add('print-target'));
+    await waitForImages();
+    window.print();
+    setTimeout(() => {
+      document.body.classList.remove('print-single');
+      document.querySelectorAll('.print-target').forEach(p => p.classList.remove('print-target'));
+    }, 1500);
+  }
+  document.getElementById('printBtn').addEventListener('click', printAll);
+  window.addEventListener('afterprint', () => {
+    document.body.classList.remove('print-single');
+    document.querySelectorAll('.print-target').forEach(p => p.classList.remove('print-target'));
+  });
+
+  document.getElementById('grid').addEventListener('click', (e) => {
+    const card = e.target.closest('.card');
+    if(card) openModal(card.dataset.id);
+  });
+  document.getElementById('search').addEventListener('input', (e) => {
+    state.search = e.target.value;
+    render();
+  });
+  document.getElementById('filters').addEventListener('click', (e) => {
+    const chip = e.target.closest('.chip');
+    if(!chip) return;
+    const key = chip.dataset.filter;
+    const val = chip.dataset.val;
+    state[key] = val;
+    document.querySelectorAll(`.chip[data-filter="${key}"]`).forEach(c => c.classList.toggle('active', c === chip));
+    render();
+  });
+  ['players','time','weight','collection'].forEach(k => {
+    document.querySelector(`.chip[data-filter="${k}"][data-val="any"]`)?.classList.add('active');
+  });
+
+  function pickRandom(){
+    const pool = filtered();
+    if(!pool.length) return;
+    const g = pool[Math.floor(Math.random() * pool.length)];
+    document.getElementById('rouletteStrip').style.display = 'flex';
+    document.getElementById('roulettePicked').textContent = `${g.name} (${g.year || ''})`;
+    document.getElementById('rouletteOpen').onclick = () => openModal(g.id);
+    document.getElementById('rouletteAgain').onclick = pickRandom;
+  }
+  document.getElementById('rouletteBtn').addEventListener('click', pickRandom);
+
+  // Dark mode
+  const savedTheme = localStorage.getItem('theme');
+  if(savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+  const dmBtn = document.getElementById('darkModeBtn');
+  if(savedTheme === 'dark') dmBtn.textContent = '☀';
+  dmBtn.addEventListener('click', () => {
+    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const next = isDark ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+    dmBtn.textContent = next === 'dark' ? '☀' : '☽';
+  });
+
+  render();
+  setStatus(`Loaded ${GAMES.length} games · fetching BGG enrichment in the background…`);
+  enrichFromBGG();
+})();
+</script>
+</body>
+</html>
