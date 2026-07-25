@@ -21,6 +21,9 @@
   body{min-height:100vh;background-image:radial-gradient(circle at 1px 1px,rgba(74,58,44,.05) 1px,transparent 0);background-size:24px 24px}
   header.topbar{position:sticky;top:0;z-index:50;background:var(--bg);border-bottom:1px solid var(--line);padding:20px 28px 16px;box-shadow:0 6px 18px rgba(74,58,44,.06)}
   .topbar-inner{max-width:1400px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;gap:18px}
+  .brand-col{display:flex;flex-direction:column;gap:4px}
+  .back-link{font-family:var(--display);font-weight:600;font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:var(--ink-soft);text-decoration:none}
+  .back-link:hover{color:var(--ink)}
   .brand{display:flex;align-items:baseline;gap:14px}
   .brand h1{font-family:var(--display);font-weight:600;font-size:32px;letter-spacing:.2px;margin:0;color:var(--ink);background:var(--banner);padding:7px 20px 5px;border-radius:12px;box-shadow:0 4px 14px rgba(232,196,104,.45)}
   .brand .sub{font-family:var(--hand);font-size:22px;color:var(--ink-soft)}
@@ -183,9 +186,12 @@
 
 <header class="topbar">
   <div class="topbar-inner">
-    <div class="brand">
-      <h1>GAME NIGHT MENU</h1>
-      <span class="sub">&mdash; what shall we play tonight?</span>
+    <div class="brand-col">
+      <a class="back-link" href="https://mrrlexy.github.io/The-Brain/">&larr; The Brain</a>
+      <div class="brand">
+        <h1>GAME NIGHT MENU</h1>
+        <span class="sub">&mdash; what shall we play tonight?</span>
+      </div>
     </div>
     <div class="topbar-tools">
       <div class="search-box"><input id="search" type="search" placeholder="Search the shelf..." autocomplete="off"></div>
